@@ -1,0 +1,27 @@
+<launch>
+ 
+  <arg name="model" default="$(find robot_grab)/urdf/wpb_home_mani.urdf"/>
+
+  <param name="robot_description" command="$(find xacro)/xacro.py $(arg model)" />
+  <param name="use_gui" value="$(arg gui)"/>
+
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+  <rosparam command="load" file="$(find robot_grab)/config/wpb_home.yaml" />
+  </node>
+
+
+  <node pkg="wpb_home_behaviors" type="wpb_home_objects_3d" name="wpb_home_objects_3d">
+    <rosparam file="$(find robot_grab)/config/wpb_home.yaml" command="load" />
+  </node>
+
+  <node pkg="wpb_home_behaviors" type="wpb_home_grab_action" name="wpb_home_grab_action">
+    <rosparam file="$(find robot_grab)/config/wpb_home.yaml" command="load" />
+  </node>
+
+  <node pkg="wpb_home_tutorials" type="wpb_home_grab_object" name="wpb_home_grab_object" output = "screen"/>
+
+  <arg name="gui" default="true" />
+  <arg name="rvizconfig" default="$(find robot_grab)/rviz/grab.rviz" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+
+</launch>

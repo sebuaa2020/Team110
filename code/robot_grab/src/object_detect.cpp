@@ -1,4 +1,4 @@
-/* 作者：宋卓煜
+/* 文档负责人：宋卓煜
 功能是基于kinect提供的点云信息，分割出物体和平面，并发布相关信息
 内容主要基于开发手册提供的例程修改完成
 */
@@ -50,7 +50,11 @@ static visualization_msgs::Marker text_marker;
 
 //桌面高度参数区间
 float table_height_min = 0.6;
-float table_height_max = 0.9;
+float table_height_max = 1.5;
+
+//物品高度参数区间
+float obj_height_min = -0.3;
+float obj_height_max = -0.05;
 
 typedef pcl::PointCloud<pcl::PointXYZRGB> PointCloud;
 ros::Publisher segmented_objects;
@@ -84,8 +88,12 @@ void ProcCloudCB(const sensor_msgs::PointCloud2 &input)
     //to footprint
     sensor_msgs::PointCloud2 pc_footprint;
     bool res = tf_listener->waitForTransform("/base_footprint", input.header.frame_id, input.header.stamp, ros::Duration(5.0)); 
+
+    ROS_INFO("obj_detect tf finish");
+
     if(res == false)
     {
+        ROS_INFO("obj_detect tf wrong");
         return;
     }
     pcl_ros::transformPointCloud("/base_footprint", input, pc_footprint, *tf_listener);
@@ -98,6 +106,7 @@ void ProcCloudCB(const sensor_msgs::PointCloud2 &input)
     cloud_source_ptr = cloud_src.makeShared(); 
 
     pcl::PassThrough<pcl::PointXYZRGB> pass;//设置滤波器对象
+    //设置点云的坐标区间
     pass.setInputCloud (cloud_source_ptr);
     pass.setFilterFieldName ("z");
     pass.setFilterLimits (0.3, 1.5);
@@ -128,12 +137,14 @@ void ProcCloudCB(const sensor_msgs::PointCloud2 &input)
     segmentation.setEpsAngle(  10.0f * (M_PI/180.0f) );
     pcl::PointIndices::Ptr planeIndices(new pcl::PointIndices);
     segmentation.segment(*planeIndices, *coefficients);
-    ROS_INFO_STREAM("1_Planes: " << planeIndices->indices.size());
+    ROS_INFO_STREAM("Num_of_Planes: " << planeIndices->indices.size());
     pcl::ExtractIndices<pcl::PointXYZRGB> extract;
 
     ////////////////////////////////////////////////////////////////////////////
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_f (new pcl::PointCloud<pcl::PointXYZRGB>);
     int i = 0, nr_points = (int) cloud_source_ptr->points.size ();
+
+    ROS_INFO("obj_detect_raw_points : %d", nr_points);
     // While 30% of the original cloud is still there
     while (cloud_source_ptr->points.size () > 0.03 * nr_points)
     {
@@ -151,7 +162,11 @@ void ProcCloudCB(const sensor_msgs::PointCloud2 &input)
         extract.setIndices (planeIndices);
         extract.setNegative (false);
         extract.filter (*plane);
-        float plane_height = plane->points[0].z;
+        float plane_height = 0;
+        for(int k=0; k<plane->width * plane->height ;k ++ ){
+                plane_height += plane->points[k].z;
+        }
+        plane_height /= plane->width * plane->height;
         ROS_WARN("%d - plana: %d points. height =%.2f" ,i, plane->width * plane->height,plane_height);
         if(plane_height > table_height_min && plane_height < table_height_max) //设置桌面高度标准
             break;
@@ -163,8 +178,13 @@ void ProcCloudCB(const sensor_msgs::PointCloud2 &input)
         i++;
     }
 
-    if (planeIndices->indices.size() == 0)
+    ROS_INFO("table plane selected");
+
+    if (planeIndices->indices.size() == 0) {
         std::cout << "Could not find a plane in the scene." << std::endl;
+        //调用语音接口发出检测平面失败提示，终止抓起流程
+
+    }
     else
     {
         // Copy the points of the plane to a new cloud.
@@ -178,7 +198,8 @@ void ProcCloudCB(const sensor_msgs::PointCloud2 &input)
         // Make sure that the resulting hull is bidimensional.
         hull.setDimension(2);
         hull.reconstruct(*convexHull);
-
+        
+        ROS_INFO("obj_detect_start");
         // Redundant check.
         if (hull.getDimension() == 2)
         {
@@ -186,7 +207,7 @@ void ProcCloudCB(const sensor_msgs::PointCloud2 &input)
             pcl::ExtractPolygonalPrismData<pcl::PointXYZRGB> prism;
             prism.setInputCloud(cloud_source_ptr);
             prism.setInputPlanarHull(convexHull);
-            prism.setHeightLimits(-0.30, -0.03); //height limit objects lying on the plane 设置物品高度范围
+            prism.setHeightLimits(obj_height_min, obj_height_max); //height limit objects lying on the plane 设置物品高度范围
             pcl::PointIndices::Ptr objectIndices(new pcl::PointIndices);
 
             // Get and show all points retrieved by the hull.
@@ -194,12 +215,17 @@ void ProcCloudCB(const sensor_msgs::PointCloud2 &input)
             extract.setIndices(objectIndices);
             extract.filter(*objects);
             segmented_objects.publish(objects); //发布物品点云信息
+            ROS_INFO("object points cloud publish");
+
             segmented_plane.publish(plane); //发布平面点云信息
+
+            ROS_INFO("plane points cloud publish");
 
             // run clustering extraction on "objects" to get several pointclouds
             pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB>);
             pcl::EuclideanClusterExtraction<pcl::PointXYZRGB> ec;
             std::vector<pcl::PointIndices> cluster_indices;
+            //聚类参数设置
             ec.setClusterTolerance (0.05);
             ec.setMinClusterSize (800);
             ec.setMaxClusterSize (10000000);
@@ -360,17 +386,27 @@ int main(int argc, char **argv)
     ROS_INFO("obj_detect start");
     tf_listener = new tf::TransformListener(); 
 
+    //ROS_INFO("obj_detect 0");
+
     ros::NodeHandle nh_param("~");
-    nh_param.param<std::string>("topic", pc_topic, "/kinect2/qhd/points");
+    nh_param.param<std::string>("topic", pc_topic, "/kinect2/sd/points");
+
+    //ROS_INFO("obj_detect 1");
 
     ros::NodeHandle nh;
     ros::Subscriber pc_sub = nh.subscribe(pc_topic, 10 , ProcCloudCB);
 
+    //ROS_INFO("obj_detect 2");
+
     pc_pub = nh.advertise<sensor_msgs::PointCloud2>("obj_pointcloud",1);
     marker_pub = nh.advertise<visualization_msgs::Marker>("obj_marker", 10);
 
+    //ROS_INFO("obj_detect 3");
+
     segmented_objects = nh.advertise<PointCloud> ("segmented_objects",1);
     segmented_plane = nh.advertise<PointCloud> ("segmented_plane",1);
+
+    //ROS_INFO("obj_detect ready");
 
     ros::spin();
 
