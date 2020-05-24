@@ -3,4 +3,8 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="mainUploadButton">#00ffffff</color>
+    <color name="mainUploadButtonBorder">#B3FFFFFF</color>
+    <color name="navigationButton">#80ffffff</color>
+    <color name="confirmButtonBorder">#ff000000</color>
 </resources>
