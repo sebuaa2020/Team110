@@ -26,7 +26,9 @@ public class MainActivity extends AppCompatActivity {
         Button mainSelectButton = findViewById(R.id.mainSwitchButton);
         mainSelectButton.setOnClickListener(v -> {
             state = robot.switchState();
+            setRobotState();
         });
+
         Button eventButton = findViewById(R.id.historyButton);
         eventButton.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), MapActivity.class);

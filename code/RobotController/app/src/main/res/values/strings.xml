@@ -3,5 +3,5 @@
     <string name="main_button_text">切换状态</string>
     <string name="navigation_bar_home">首页</string>
     <string name="navigation_bar_map">地图</string>
-    <string name="navigation_bar_about">关于我们</string>
+    <string name="navigation_bar_about">用户</string>
 </resources>

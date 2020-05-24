@@ -2,11 +2,17 @@
 
 package com.fun.robotcontroller;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import Utils.AsynNetUtils;
+import androidx.appcompat.app.AlertDialog;
 
 public class Robot {
     final private static Robot instance = new Robot();
     private int state = 0;
+    private String user = "root";
+    private JSONObject response;
 
     private Robot() {
     }
@@ -16,32 +22,102 @@ public class Robot {
     }
 
     int getState() {
+        JSONObject cmd = new JSONObject();
         try {
-            sendHttp("get_state");
+            cmd.put("cmd", "get_state");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            sendHttp(cmd);
         } catch (Exception e) {
             state = -1;
+            e.printStackTrace();
         }
         return state;
     }
 
     int switchState() {
+        JSONObject cmd = new JSONObject();
         try {
-            sendHttp("switch_state");
-            sendHttp("get_state");
+            cmd.put("cmd", "switch_state");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            sendHttp(cmd);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return state;
     }
 
-    private void sendHttp(String cmd) {
-        AsynNetUtils.post("http://10.136.107.127:5000", cmd, response -> {
-            try {
-                state = Integer.parseInt(response);
-            } catch (Exception e) {
-                //抛出网络请求异常
-                e.printStackTrace();
-            }
+    boolean logIn(String user, String pwd) {
+        JSONObject cmd = new JSONObject();
+        try {
+            cmd.put("cmd", "log_in");
+            cmd.put("user", user);
+            cmd.put("pwd", pwd);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            sendHttp(cmd);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    void getMap() {
+        JSONObject cmd = new JSONObject();
+        try {
+            cmd.put("cmd", "get_map");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            sendHttp(cmd);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    void navigationPoint() {
+        JSONObject cmd = new JSONObject();
+        try {
+            cmd.put("cmd", "navigation");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            sendHttp(cmd);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    void userAdvise(String advice) {
+        JSONObject cmd = new JSONObject();
+        try {
+            cmd.put("cmd", "advise");
+            cmd.put("user", user);
+            cmd.put("advise_content", advice);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            sendHttp(cmd);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendHttp(JSONObject cmd) throws Exception {
+        final String[] res = {""};
+        AsynNetUtils.post("", cmd.toString(), response -> {
+            res[0] = response;
         });
+        this.response = new JSONObject(res[0]);
     }
 }

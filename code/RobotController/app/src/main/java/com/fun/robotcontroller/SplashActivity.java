@@ -20,7 +20,7 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         new android.os.Handler().postDelayed(() -> {
             Intent mainIntent = new Intent(getApplicationContext(),
-                    MainActivity.class);
+                    LogInActivity.class);
             startActivity(mainIntent);
             finish();
         }, 1000);
