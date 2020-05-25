@@ -50,7 +50,7 @@ static visualization_msgs::Marker text_marker;
 
 //桌面高度参数区间
 float table_height_min = 0.6;
-float table_height_max = 1.5;
+float table_height_max = 1;
 
 //物品高度参数区间
 float obj_height_min = -0.3;

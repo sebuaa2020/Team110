@@ -13,7 +13,7 @@
 
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
 
-  <node pkg="robot_grab" type="grab_server" name="grab_server" output="screen">
+  <node pkg="robot_grab" type="pass_server" name="pass_server" output="screen">
     <param name="start" type="bool" value="false"/> 
     <rosparam file="$(find robot_grab)/config/wpb_home.yaml" command="load" />
   </node>
@@ -23,6 +23,6 @@
  
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
 
-  <node name="grab_ctrl" pkg="robot_grab" type="grab_client"  output="screen"/>
+  <node name="grab_ctrl" pkg="robot_grab" type="pass_client"  output="screen"/>
   
 </launch>

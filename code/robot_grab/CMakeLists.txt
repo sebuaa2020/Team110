@@ -42,6 +42,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs geometry_msgs std_msgs visualization_msgs 
   image_geometry message_generation
   move_base_msgs actionlib 
+  gazebo_msgs
 )
 ##   * add "message_runtime" and every package in MSG_DEP_SET to
 ##     catkin_package(CATKIN_DEPENDS ...)
@@ -225,5 +226,37 @@ add_executable(object_detect
 )
 add_dependencies(object_detect ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(object_detect
+  ${catkin_LIBRARIES}
+)
+
+add_executable(grab_server
+  src/grab_server.cpp
+)
+add_dependencies(grab_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(grab_server
+  ${catkin_LIBRARIES}
+)
+
+add_executable(home_core
+  src/home_core.cpp
+)
+add_dependencies(home_core ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(home_core
+  ${catkin_LIBRARIES}
+)
+
+add_executable(pass_server
+  src/pass_server.cpp
+)
+add_dependencies(pass_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(pass_server
+  ${catkin_LIBRARIES}
+)
+
+add_executable(pass_client
+  src/pass_client.cpp
+)
+add_dependencies(pass_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(pass_client
   ${catkin_LIBRARIES}
 )
