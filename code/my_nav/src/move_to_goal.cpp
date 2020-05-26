@@ -43,13 +43,10 @@ int main(argc,argv)
             if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
             {
                 ROS_INFO("Arrived at %s!",strGoto.c_str());
-                nState = STATE_GRAB;
-                nDelay = 0;
             }
             else
             {
                 ROS_INFO("Failed to get to %s ...",strGoto.c_str() );
-                nState = STATE_ASK;
             }
         }
                 
@@ -57,6 +54,5 @@ int main(argc,argv)
     else
     {
         ROS_ERROR("Failed to call service GetWaypointByName");
-        nState = STATE_ASK;
     }
 }
