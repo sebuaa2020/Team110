@@ -5,11 +5,14 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import Utils.AsynNetUtils;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class UserActivity extends AppCompatActivity {
-    private Robot robot = Robot.getInstance();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -19,7 +22,20 @@ public class UserActivity extends AppCompatActivity {
         Button adviseButton = findViewById(R.id.advise);
         adviseButton.setOnClickListener(v -> {
             EditText advice = findViewById(R.id.advice);
-            robot.userAdvise(advice.getText().toString());
+            JSONObject cmd = new JSONObject();
+            try {
+                cmd.put("cmd", "advise");
+                cmd.put("advise_content", advice);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            String jsonString = cmd.toString();
+            try {
+                AsynNetUtils.post("http://192.168.0.103:5000", jsonString, response -> {
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             advice.setText("");
         });
 

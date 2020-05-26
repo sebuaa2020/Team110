@@ -78,12 +78,12 @@
 
     <TextView
         android:id="@+id/mapTitle"
-        android:layout_width="214dp"
-        android:layout_height="36dp"
+        android:layout_width="164dp"
+        android:layout_height="34dp"
         android:layout_marginTop="20dp"
         android:text="地图"
         android:textAlignment="center"
-        android:textSize="24sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.421"
         app:layout_constraintStart_toStartOf="parent"
