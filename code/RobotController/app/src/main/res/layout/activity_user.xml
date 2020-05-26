@@ -51,7 +51,7 @@
         android:layout_marginStart="314dp"
         android:layout_marginTop="29dp"
         android:layout_marginEnd="67dp"
-        android:background="@drawable/navigation_bar_button"
+        android:background="@drawable/upload_button"
         android:text="提交"
         app:layout_constraintEnd_toEndOf="@+id/mainBackground"
         app:layout_constraintStart_toStartOf="@+id/mainBackground"
