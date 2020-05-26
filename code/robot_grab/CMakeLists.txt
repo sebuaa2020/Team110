@@ -260,3 +260,11 @@ add_dependencies(pass_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORT
 target_link_libraries(pass_client
   ${catkin_LIBRARIES}
 )
+
+add_executable(grab_client
+  src/grab_client.cpp
+)
+add_dependencies(grab_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(grab_client
+  ${catkin_LIBRARIES}
+)

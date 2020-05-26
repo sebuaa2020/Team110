@@ -46,13 +46,13 @@ void GrabResultCB(const std_msgs::String::ConstPtr &msg)
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "grab_client");  //程序初始化
+    ros::init(argc, argv, "wpb_home_grab_client");  //程序初始化
 
     ros::NodeHandle n;
     behaviors_pub = n.advertise<std_msgs::String>("/wpb_home/behaviors", 30);
     ros::Subscriber res_sub = n.subscribe("/wpb_home/grab_result", 30, GrabResultCB);
 
-    ROS_WARN("[main] grab_client");
+    ROS_WARN("[main] wpb_home_grab_client");
     sleep(1);
 
     behavior_msg.data = "grab start";

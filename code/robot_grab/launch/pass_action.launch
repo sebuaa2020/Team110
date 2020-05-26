@@ -17,9 +17,6 @@
     <param name="start" type="bool" value="false"/> 
     <rosparam file="$(find robot_grab)/config/wpb_home.yaml" command="load" />
   </node>
-
-  <node pkg="robot_grab" type="home_core" name="home_core" output="screen"/>
-
  
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
 
