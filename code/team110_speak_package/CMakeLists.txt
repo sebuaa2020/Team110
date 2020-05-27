@@ -1,8 +1,5 @@
-cmake_minimum_required(VERSION 3.0.2)
-project(team110_speak_package)
-
-## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+cmake_minimum_required(VERSION 2.8.3)
+project(xfei_asr)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -15,7 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -32,10 +28,10 @@ find_package(catkin REQUIRED COMPONENTS
 ##   your messages/services/actions (e.g. std_msgs, actionlib_msgs, ...).
 ## * In the file package.xml:
 ##   * add a build_depend tag for "message_generation"
-##   * add a build_depend and a exec_depend tag for each package in MSG_DEP_SET
+##   * add a build_depend and a run_depend tag for each package in MSG_DEP_SET
 ##   * If MSG_DEP_SET isn't empty the following dependency has been pulled in
 ##     but can be declared for certainty nonetheless:
-##     * add a exec_depend tag for "message_runtime"
+##     * add a run_depend tag for "message_runtime"
 ## * In this file (CMakeLists.txt):
 ##   * add "message_generation" and every package in MSG_DEP_SET to
 ##     find_package(catkin REQUIRED COMPONENTS ...)
@@ -80,7 +76,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## To declare and build dynamic reconfigure parameters within this
 ## package, follow these steps:
 ## * In the file package.xml:
-##   * add a build_depend and a exec_depend tag for "dynamic_reconfigure"
+##   * add a build_depend and a run_depend tag for "dynamic_reconfigure"
 ## * In this file (CMakeLists.txt):
 ##   * add "dynamic_reconfigure" to
 ##     find_package(catkin REQUIRED COMPONENTS ...)
@@ -98,13 +94,13 @@ find_package(catkin REQUIRED COMPONENTS
 ###################################
 ## The catkin_package macro generates cmake config files for your package
 ## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if your package contains header files
+## INCLUDE_DIRS: uncomment this if you package contains header files
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES team110_speak_package
+#  LIBRARIES xfei_asr
 #  CATKIN_DEPENDS roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
@@ -115,40 +111,115 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
+# include_directories(include)
 include_directories(
-# include
   ${catkin_INCLUDE_DIRS}
+  include
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/team110_speak_package.cpp
+# add_library(xfei_asr
+#   src/${PROJECT_NAME}/xfei_asr.cpp
 # )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(xfei_asr ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-## With catkin_make all packages are built within a single CMake context
-## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/team110_speak_package_node.cpp)
+add_executable(asr_sample src/asr_sample.c)
+add_executable(iat_sample src/iat_sample.c)
+add_executable(tts_sample src/tts_sample.c)
 
-## Rename C++ executable without prefix
-## The above recommended prefix causes long target names, the following renames the
-## target back to the shorter version for ease of user use
-## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-# set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
+add_executable(tts_subscribe_speak src/tts_subscribe_speak.cpp)
+#add_executable(sch_speak src/sch_speak.c)
+#add_executable(sch_text src/sch_text.c)
+#add_executable(speech_recognizer src/speech_recognizer.c)
+#add_executable(linuxrec src/linuxrec.c)
+add_executable(iat_record src/iat_record.c src/speech_recognizer.c src/linuxrec.c)
+
+add_executable(iat_publish_speak src/iat_publish_speak.cpp src/speech_recognizer.c src/linuxrec.c)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(xfei_asr_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(${PROJECT_NAME}_node
-#   ${catkin_LIBRARIES}
+target_link_libraries(
+   asr_sample
+   ${catkin_LIBRARIES} 
+   /home/cymario/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -pthread
+ )
+
+target_link_libraries(
+   iat_sample
+   ${catkin_LIBRARIES} 
+   /home/cymario/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -pthread
+ )
+
+target_link_libraries(
+   tts_subscribe_speak
+   ${catkin_LIBRARIES} 
+   /home/cymario/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -pthread
+ )
+
+target_link_libraries(
+   iat_publish_speak
+   ${catkin_LIBRARIES} 
+   /home/cymario/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -lpthread -lm -lrt -lasound
+ )
+
+#target_link_libraries(
+#   sch_speak
+#   ${catkin_LIBRARIES} 
+#   /home/ubu/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -pthread
 # )
+
+#target_link_libraries(
+#   sch_text
+#   ${catkin_LIBRARIES} 
+#   /home/ubu/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -pthread
+# )
+
+target_link_libraries(
+   tts_sample
+   ${catkin_LIBRARIES} 
+   /home/cymario/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -pthread
+ )
+
+#target_link_libraries(
+#   speech_recognizer
+#   ${catkin_LIBRARIES} 
+#   /home/ubu/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -pthread
+# )
+
+#target_link_libraries(
+#   linuxrec
+#   ${catkin_LIBRARIES} 
+#   /home/ubu/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -pthread
+# )
+#add_library(linuxrec src/linuxrec.c)
+#add_library(speech_recognizer src/speech_recognizer.c)
+#target_link_libraries(
+#   speech_recognizer
+#   ${catkin_LIBRARIES} 
+#   /home/ubu/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -pthread
+#   linuxrec
+# )
+
+target_link_libraries(
+   iat_record
+   ${catkin_LIBRARIES} 
+   /home/cymario/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -lpthread -lm -lrt -lasound
+   #linuxrec
+   #speech_recognizer  
+ )
+
+
+
+
 
 #############
 ## Install ##
@@ -159,23 +230,16 @@ include_directories(
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-# catkin_install_python(PROGRAMS
+# install(PROGRAMS
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
-## Mark executables for installation
-## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
-# install(TARGETS ${PROJECT_NAME}_node
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
-
-## Mark libraries for installation
-## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
-# install(TARGETS ${PROJECT_NAME}
+## Mark executables and/or libraries for installation
+# install(TARGETS xfei_asr xfei_asr_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
 ## Mark cpp header files for installation
@@ -197,7 +261,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_team110_speak_package.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_xfei_asr.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
