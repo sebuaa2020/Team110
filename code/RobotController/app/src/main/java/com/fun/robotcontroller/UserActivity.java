@@ -25,7 +25,7 @@ public class UserActivity extends AppCompatActivity {
             JSONObject cmd = new JSONObject();
             try {
                 cmd.put("cmd", "advise");
-                cmd.put("advise_content", advice);
+                cmd.put("advice", advice.getText().toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
