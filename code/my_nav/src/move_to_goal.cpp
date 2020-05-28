@@ -12,13 +12,27 @@
 #include <tf/transform_listener.h>
 #include <geometry_msgs/PoseStamped.h>
 
+using namespace std;
+
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 static waterplus_map_tools::GetWaypointByName srvName;
 //strGoto为要前往的waypoing的名字
 static string strGoto;
+static ros::ServiceClient cliGetWPName;
 
-int main(argc,argv)
+int main(int argc, char **argv)
 {
+    ros::init(argc, argv, "wpb_home_shopping");
+    ros::NodeHandle n;
+    cliGetWPName = n.serviceClient<waterplus_map_tools::GetWaypointByName>("/waterplus/get_waypoint_name");
+    if(argc<=1){
+        ROS_INFO("No wp Name!");
+        return 0;
+    }else{
+        strGoto = argv[1];
+        ROS_INFO("OK, wp Name Received!");
+    }
+
     srvName.request.name = strGoto;
     if (cliGetWPName.call(srvName))
     {

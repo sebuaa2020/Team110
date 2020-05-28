@@ -232,3 +232,11 @@ add_dependencies(move_to_goal ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPOR
 target_link_libraries(move_to_goal
   ${catkin_LIBRARIES}
 )
+
+add_executable(simple_move
+  src/simple_move.cpp
+)
+add_dependencies(simple_move ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(simple_move
+  ${catkin_LIBRARIES}
+)
