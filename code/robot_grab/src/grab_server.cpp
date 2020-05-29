@@ -488,6 +488,11 @@ void ProcCloudCB(const sensor_msgs::PointCloud2 &input)
             nStep = STEP_PLANE_DIST;
             fMoveTargetX = boxPlane.xMin - 0.7;
             fMoveTargetY = 0;
+            if ((fPlaneHeight < 0.6) || (fPlaneHeight > 1.0)) {
+                nStep = STEP_DONE;
+                result_msg.data = "table is not suitable to grab";
+                result_pub.publish(result_msg);
+            }
         }
         result_msg.data = "find plane";
         result_pub.publish(result_msg);
