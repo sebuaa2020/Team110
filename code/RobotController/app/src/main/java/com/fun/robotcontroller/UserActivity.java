@@ -31,7 +31,7 @@ public class UserActivity extends AppCompatActivity {
             }
             String jsonString = cmd.toString();
             try {
-                AsynNetUtils.post("http://192.168.0.103:5000", jsonString, response -> {
+                AsynNetUtils.post(jsonString, response -> {
                 });
             } catch (Exception e) {
                 e.printStackTrace();

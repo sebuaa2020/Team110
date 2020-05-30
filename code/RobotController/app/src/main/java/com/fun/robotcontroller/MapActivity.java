@@ -17,12 +17,12 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MapActivity extends AppCompatActivity {
     NavMap map = NavMap.getInstance();
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         getMap();
-
         TextView mapTitle = findViewById(R.id.mapTitle);
 
         if (map.getState() == -1) {
@@ -31,19 +31,9 @@ public class MapActivity extends AppCompatActivity {
             mapTitle.setText("地图");
         }
 
-        ImageView mapView = findViewById(R.id.mapView);
-
         Button refreshButton = findViewById(R.id.refreshButton);
         refreshButton.setOnClickListener(v -> {
             getMap();
-            if (map.getState() == -1) {
-                mapTitle.setText("未能获取地图信息");
-                mapView.setVisibility(View.INVISIBLE);
-            } else {
-                mapTitle.setText("地图");
-                mapView.setVisibility(View.VISIBLE);
-                mapView.setImageBitmap(map.getMap());
-            }
         });
 
         Button eventButton = findViewById(R.id.homeButton);
@@ -69,11 +59,12 @@ public class MapActivity extends AppCompatActivity {
         }
         try {
             String jsonString = cmd.toString();
-            AsynNetUtils.post("http://192.168.0.103:5000", jsonString, response -> {
+            AsynNetUtils.post(jsonString, response -> {
                 JSONObject res = new JSONObject();
                 try {
                     res = new JSONObject(response);
                     setMap(res);
+                    refresh();
                 } catch (Exception e) {
                     map.setState(-1);
                     e.printStackTrace();
@@ -91,13 +82,26 @@ public class MapActivity extends AppCompatActivity {
             map.setState(result);
             if (result > 0) {
                 map.setMap(response.getString("map"));
-                map.setX(response.getDouble("pose_x"));
-                map.setY(response.getDouble("pose_y"));
-                map.setTheta(response.getDouble("pose_theta"));
+//                map.setX(response.getDouble("pose_x"));
+//                map.setY(response.getDouble("pose_y"));
+//                map.setTheta(response.getDouble("pose_theta"));
             }
         } catch (JSONException e) {
             map.setState(-1);
             e.printStackTrace();
+        }
+    }
+
+    private void refresh() {
+        TextView mapTitle = findViewById(R.id.mapTitle);
+        ImageView mapView = findViewById(R.id.mapView);
+        if (map.getState() == -1) {
+            mapTitle.setText("未能获取地图信息");
+            mapView.setVisibility(View.INVISIBLE);
+        } else {
+            mapTitle.setText("地图");
+            mapView.setVisibility(View.VISIBLE);
+            mapView.setImageBitmap(map.getMap());
         }
     }
 }

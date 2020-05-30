@@ -1,6 +1,7 @@
 from flask import Flask, request
 import json
 from database import DataBase
+from robot import Robot
 
 app = Flask(__name__)
 
@@ -11,10 +12,15 @@ def hello():
     response = {}
     if data['cmd'] == 'get_state':
         response['result'] = 1
-        response['state'] = 1
+        response['state'] = robot.get_state()
     elif data['cmd'] == 'switch_state':
         response['result'] = 1
-        response['state'] = 0
+        response['state'] = robot.switch_state()
+    elif data['cmd'] == 'get_map':
+        response['result'] = 1
+        response['map'] = robot.get_map()
+    elif data['cmd'] == 'navigation:':
+        response['result'] = 1
     elif data['cmd'] == 'log_in':
         response['result'] = 1
         response['log_in_result'] = db.logIn(data['user'], data['pwd'])
@@ -31,4 +37,5 @@ def hello():
 
 if __name__ == "__main__":
     db = DataBase()
+    robot = Robot()
     app.run(host='0.0.0.0')

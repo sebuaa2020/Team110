@@ -50,7 +50,7 @@ public class LogInActivity extends AppCompatActivity {
             String jsonString = cmd.toString();
             TextView userText = findViewById(R.id.user);
             TextView pwdText = findViewById(R.id.pwd);
-            AsynNetUtils.post("http://192.168.0.103:5000", jsonString, response -> {
+            AsynNetUtils.post(jsonString, response -> {
                 JSONObject res = new JSONObject();
                 try {
                     res = new JSONObject(response);
@@ -100,7 +100,7 @@ public class LogInActivity extends AppCompatActivity {
             String jsonString = cmd.toString();
             TextView userText = findViewById(R.id.user);
             TextView pwdText = findViewById(R.id.pwd);
-            AsynNetUtils.post("http://192.168.0.103:5000", jsonString, response -> {
+            AsynNetUtils.post(jsonString, response -> {
                 JSONObject res = new JSONObject();
                 try {
                     res = new JSONObject(response);

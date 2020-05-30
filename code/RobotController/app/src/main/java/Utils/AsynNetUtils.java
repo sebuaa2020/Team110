@@ -17,8 +17,9 @@ public class AsynNetUtils {
         }).start();
     }
 
-    public static void post(final String url, final String content, final Callback callback) {
+    public static void post(final String content, final Callback callback) {
         final Handler handler = new Handler();
+        final String url = "http://192.168.0.101:5000";
         new Thread(() -> {
             final String response = NetUtils.post(url, content);
             handler.post(() -> callback.onResponse(response));

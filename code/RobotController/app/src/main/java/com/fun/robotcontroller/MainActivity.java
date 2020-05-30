@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         }
         try {
             String jsonString = cmd.toString();
-            AsynNetUtils.post("http://192.168.0.103:5000", jsonString, response -> {
+            AsynNetUtils.post(jsonString, response -> {
                 JSONObject res = new JSONObject();
                 try {
                     res = new JSONObject(response);
