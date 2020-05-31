@@ -26,7 +26,7 @@ enum {
 };
 
 typedef struct record_dev_id {
-    union U {
+    union {
         char * name;
         int index;
         void * resv;
