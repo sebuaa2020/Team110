@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject res = new JSONObject();
                 try {
                     res = new JSONObject(response);
-                } catch (JSONException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 try {

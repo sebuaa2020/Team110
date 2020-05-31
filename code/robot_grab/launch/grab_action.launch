@@ -22,7 +22,5 @@
 
  
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
-
-  <node name="grab_ctrl" pkg="robot_grab" type="grab_client"  output="screen"/>
   
 </launch>

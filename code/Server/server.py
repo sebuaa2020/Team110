@@ -19,8 +19,12 @@ def hello():
     elif data['cmd'] == 'get_map':
         response['result'] = 1
         response['map'] = robot.get_map()
-    elif data['cmd'] == 'navigation:':
+        response['pose_x'] = robot.pose['x']
+        response['pose_y'] = robot.pose['y']
+        response['pose_theta'] = robot.pose['theta']
+    elif data['cmd'] == 'navigation':
         response['result'] = 1
+        robot.navigation(data['x'], data['y'], data['theta'])
     elif data['cmd'] == 'log_in':
         response['result'] = 1
         response['log_in_result'] = db.logIn(data['user'], data['pwd'])

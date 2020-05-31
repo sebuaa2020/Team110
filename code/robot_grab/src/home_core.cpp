@@ -65,19 +65,25 @@ int main(int argc, char** argv)
     double roll,pitch,yaw, length, angle;
     sleep(1);
 
+
+
     ros::Rate r(100.0);
 
     while(n.ok()) {
         tf::quaternionMsgToTF(curPose.orientation,RQ2);
         tf::Matrix3x3(RQ2).getRPY(roll,pitch,yaw);
+        ROS_INFO("pose_x:%f, pose_y:%f, pose_theta:%f", curPose.position.x, curPose.position.y, (float)yaw);
+
+
         length = sqrt(pow(lastPose.position.x - curPose.position.x, 2) + pow(lastPose.position.y - curPose.position.y, 2));
         angle = atan2((curPose.position.y - lastPose.position.y), (curPose.position.x - lastPose.position.x));
-        ROS_INFO("length:%f, angle:%f, yaw:%f", length, angle, yaw);
 
 
         pose_diff_msg.x = length * cos(angle - yaw);
         pose_diff_msg.y = length * sin(angle - yaw);
         pose_diff_msg.theta = angle;
+
+
         pose_diff_pub.publish(pose_diff_msg);
         ros::spinOnce();
         r.sleep();

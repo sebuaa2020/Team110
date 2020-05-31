@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -17,19 +16,12 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MapActivity extends AppCompatActivity {
     NavMap map = NavMap.getInstance();
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         getMap();
-        TextView mapTitle = findViewById(R.id.mapTitle);
-
-        if (map.getState() == -1) {
-            mapTitle.setText("未能获取地图信息");
-        } else {
-            mapTitle.setText("地图");
-        }
+        refresh();
 
         Button refreshButton = findViewById(R.id.refreshButton);
         refreshButton.setOnClickListener(v -> {
@@ -48,6 +40,31 @@ public class MapActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
         });
+
+        Button navigationButton = findViewById(R.id.navigationButton);
+        navigationButton.setOnClickListener(v -> {
+            sendNavPoint();
+        });
+    }
+
+    private void sendNavPoint() {
+        JSONObject cmd = new JSONObject();
+        MapImageView imageView = findViewById(R.id.mapView);
+        try {
+            cmd.put("cmd", "navigation");
+            cmd.put("x", imageView.getPose_x());
+            cmd.put("y", imageView.getPose_y());
+            cmd.put("theta", imageView.getPose_theta());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            String jsonString = cmd.toString();
+            AsynNetUtils.post(jsonString, response -> {
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void getMap() {
@@ -82,9 +99,9 @@ public class MapActivity extends AppCompatActivity {
             map.setState(result);
             if (result > 0) {
                 map.setMap(response.getString("map"));
-//                map.setX(response.getDouble("pose_x"));
-//                map.setY(response.getDouble("pose_y"));
-//                map.setTheta(response.getDouble("pose_theta"));
+                map.setX(response.getDouble("pose_x"));
+                map.setY(response.getDouble("pose_y"));
+                map.setTheta(response.getDouble("pose_theta"));
             }
         } catch (JSONException e) {
             map.setState(-1);
@@ -94,7 +111,7 @@ public class MapActivity extends AppCompatActivity {
 
     private void refresh() {
         TextView mapTitle = findViewById(R.id.mapTitle);
-        ImageView mapView = findViewById(R.id.mapView);
+        MapImageView mapView = findViewById(R.id.mapView);
         if (map.getState() == -1) {
             mapTitle.setText("未能获取地图信息");
             mapView.setVisibility(View.INVISIBLE);
