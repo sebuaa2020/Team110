@@ -17,10 +17,36 @@ rosrun wpr_simualtion keyboard_vel_ctrl
 当地图扫描完毕后，运行：
 
 ```
-rosrun map_server map_saver -f map
+rosrun map_server map_saver -f src/my_nav/maps/map
 ```
 
-将map文件保存在工作区下目录，文件名为map.pgm和map.yaml
+将map文件保存在my_nav包中的maps目录下，文件名为map.pgm和map.yaml
+
+* 设定航点
+
+首先运行
+
+```
+roslaunch my_nav add_waypoints.launch
+```
+
+在rviz界面上，点击addwaypoint按钮在地图上设置航点
+
+航点设置完毕后，运行
+
+```
+rosrun my_nav save_waypoints
+```
+
+保存航点，保存文件为waypoints.xml，默认路径为本包的目录下（可在源文件中修改）
+
+#### 导航部分
+
+在使用定向移动和定点移动功能前，需要运行my_navigation.launch文件
+
+```
+roslaunch my_nav my_navigation.launch
+```
 
 * 定向移动
 
