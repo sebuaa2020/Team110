@@ -33,20 +33,14 @@ typedef struct record_dev_id {
     }u;
 }record_dev_id;
 
-#ifdef __cplusplus
 
-extern "C" {
-
-#endif
-
-//c/c++风格不同
 
 typedef struct recorder {
     void (*on_data_ind)(char *data, unsigned long len, void *user_para);
 	void * user_cb_para;
 	volatile int state;	 //录音状态
 
-	void * wavein_hdl;、
+	void * wavein_hdl;
 	/* thread id 很有可能是个struct 这个时候不传入 */
 
 	pthread_t rec_thread; 
@@ -64,30 +58,46 @@ typedef struct recorder {
 
 	size_t period_frames;
 	size_t buffer_frames;
-} recorder;
+} Recorder;
+
+#ifdef __cplusplus
+
+extern "C" {
+
+#endif
+
+//c/c++风格不同
+
+//当前输入设备的ID
+record_dev_id get_default_input_dev();
+
+//获取目前活动中的输入设备数量
+
+int get_input_dev_num();
+
 
 //创建录音机
-int create_recorder(recorder ** out_rec, 
+int create_recorder(Recorder ** out_rec, 
 				void (*on_data_ind)(char *data, unsigned long len, void *user_para), 
 				void* user_cb_para);
 
 //销毁录音机
-void destroy_recorder(recorder ** rec);
+void destroy_recorder(Recorder * rec);
 
 //打开录音机
-int open_recorder(recorder *rec, record_dev_id dev,
+int open_recorder(Recorder *rec, record_dev_id dev,
                 WAVEFORMATEX * fmt);
 
 //关闭录音机
-void close_recorder(recorder * rec);
+void close_recorder(Recorder * rec);
 
 //开始录音
-int start_record(recorder * rec);
+int start_record(Recorder * rec);
 
 //结束录音
-int stop_record(recorder * rec);
+int stop_record(Recorder * rec);
 
-int is_record_stopped(recorder * rec);
+int is_record_stopped(Recorder * rec);
 
 #ifdef __cplusplus
 
