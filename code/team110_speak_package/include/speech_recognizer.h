@@ -22,7 +22,7 @@ enum sr_audsrc {
 
 
 //对应的notice类
-struct speech_rec_notifier {
+typedef struct speech_rec_notifier {
 
 	void (*on_result)(const char *result, char is_last);
 
@@ -30,13 +30,13 @@ struct speech_rec_notifier {
 
 	void (*on_speech_end)(int reason);	/* 0 if VAD.  others, error : see E_SR_xxx and msp_errors.h  */
 
-};
+}speech_rec_notifier;
 
 
 
 #define END_REASON_VAD_DETECT	0	/* detected speech done  */
 
-struct speech_rec {
+typedef struct speech_rec {
 
 	enum sr_audsrc aud_src;  /* from mic or manual  stream write */
 
@@ -56,7 +56,7 @@ struct speech_rec {
 
 	char * session_begin_params;
 
-};
+}speech_rec;
 
 
 
