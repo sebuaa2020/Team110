@@ -104,7 +104,7 @@ public class LogInActivity extends AppCompatActivity {
                 JSONObject res = new JSONObject();
                 try {
                     res = new JSONObject(response);
-                } catch (JSONException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 int signUpState = 0;
