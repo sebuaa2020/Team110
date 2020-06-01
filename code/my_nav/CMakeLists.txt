@@ -121,10 +121,11 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES my_nav
-#  CATKIN_DEPENDS actionlib cv_bridge geometry_msgs image_geometry image_transport message_generation move_base_msgs package pcl_conversions pcl_ros roscpp rospy sensor_msgs std_msgs std_msgs tf visualization_msgs waterplus_map_tools wpb_home_behaviors wpb_home_bringup wpb_home_tutorials xfyun_waterplus
-#  DEPENDS system_lib
+  INCLUDE_DIRS include
+  LIBRARIES my_nav
+#  CATKIN_DEPENDS message_runtime
+  CATKIN_DEPENDS actionlib cv_bridge geometry_msgs image_geometry image_transport move_base_msgs pcl_conversions pcl_ros roscpp rospy sensor_msgs std_msgs std_msgs tf visualization_msgs waterplus_map_tools wpb_home_behaviors wpb_home_bringup wpb_home_tutorials xfyun_waterplus message_runtime
+  DEPENDS system_lib
 )
 
 ###########
@@ -238,5 +239,28 @@ add_executable(simple_move
 )
 add_dependencies(simple_move ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(simple_move
+  ${catkin_LIBRARIES}
+)
+
+add_executable(nav_server
+  src/nav_server.cpp
+)
+add_dependencies(nav_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(nav_server
+  ${catkin_LIBRARIES}
+)
+
+add_executable(save_waypoints
+  src/save_waypoints.cpp
+)
+add_dependencies(save_waypoints ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(save_waypoints
+  ${catkin_LIBRARIES}
+)
+
+add_executable(functions.h
+  )
+add_dependencies(functions.h ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(functions.h
   ${catkin_LIBRARIES}
 )
