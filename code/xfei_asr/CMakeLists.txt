@@ -113,6 +113,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+  include ${catkin_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   include
 )
@@ -150,25 +151,25 @@ add_executable(iat_publish_speak src/iat_publish_speak.cpp src/speech_recognizer
 target_link_libraries(
    asr_sample
    ${catkin_LIBRARIES} 
-   /home/cymario/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -pthread
+   /home/eric/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -pthread
  )
 
 target_link_libraries(
    iat_sample
    ${catkin_LIBRARIES} 
-   /home/cymario/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -pthread
+   /home/eric/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -pthread
  )
 
 target_link_libraries(
    tts_subscribe_speak
    ${catkin_LIBRARIES} 
-   /home/cymario/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -pthread
+   /home/eric/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -pthread
  )
 
 target_link_libraries(
    iat_publish_speak
    ${catkin_LIBRARIES} 
-   /home/cymario/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -lpthread -lm -lrt -lasound
+   /home/eric/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -lpthread -lm -lrt -lasound
  )
 
 #target_link_libraries(
@@ -186,7 +187,7 @@ target_link_libraries(
 target_link_libraries(
    tts_sample
    ${catkin_LIBRARIES} 
-   /home/cymario/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -pthread
+   /home/eric/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -pthread
  )
 
 #target_link_libraries(
@@ -212,7 +213,7 @@ target_link_libraries(
 target_link_libraries(
    iat_record
    ${catkin_LIBRARIES} 
-   /home/cymario/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -lpthread -lm -lrt -lasound
+   /home/eric/catkin_ws/src/xfei_asr/lib/libmsc.so -ldl -lpthread -lm -lrt -lasound
    #linuxrec
    #speech_recognizer  
  )
@@ -268,3 +269,11 @@ target_link_libraries(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+add_executable(main_control
+  src/main_control.cpp
+)
+add_dependencies(main_control ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(main_control
+  ${catkin_LIBRARIES}
+)

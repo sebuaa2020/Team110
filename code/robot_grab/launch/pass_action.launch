@@ -11,7 +11,7 @@
   <rosparam command="load" file="$(find robot_grab)/config/wpb_home.yaml" />
   </node>
 
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />-->
 
   <node pkg="robot_grab" type="pass_server" name="pass_server" output="screen">
     <param name="start" type="bool" value="false"/> 

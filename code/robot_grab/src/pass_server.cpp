@@ -110,7 +110,7 @@ int main(int argc, char** argv)
         case STEP_HAND_UP:
             if(nDelayCount == 0)
             {
-                result_msg.data = "hand up";
+                result_msg.data = "传递开始";
                 result_pub.publish(result_msg);
                 ROS_WARN("[wpb_home_pass_server] STEP_HAND_UP");
             }
@@ -122,8 +122,8 @@ int main(int argc, char** argv)
             {
                 nDelayCount = 0;
                 nStep = STEP_GRIPPER;
-                result_msg.data = "gripper";
-                result_pub.publish(result_msg);
+                // result_msg.data = "gripper";
+                // result_pub.publish(result_msg);
                 ROS_WARN("[wpb_home_pass_server] STEP_GRIPPER");
             }
             break;
@@ -135,8 +135,8 @@ int main(int argc, char** argv)
             {
                 nDelayCount = 0;
                 nStep = STEP_HAND_DOWN;
-                result_msg.data = "hand down";
-                result_pub.publish(result_msg);
+                // result_msg.data = "hand down";
+                // result_pub.publish(result_msg);
                 ROS_WARN("[wpb_home_pass_server] STEP_HAND_DOWN");
             }
             break;
@@ -149,7 +149,7 @@ int main(int argc, char** argv)
             {
                 nDelayCount = 0;
                 nStep = STEP_DONE;
-                result_msg.data = "done";
+                result_msg.data = "传递完成";
                 result_pub.publish(result_msg);
                 ROS_WARN("[wpb_home_pass_server] STEP_DONE");
             }

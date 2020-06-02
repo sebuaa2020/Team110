@@ -490,12 +490,15 @@ void ProcCloudCB(const sensor_msgs::PointCloud2 &input)
             fMoveTargetY = 0;
             if ((fPlaneHeight < 0.6) || (fPlaneHeight > 1.0)) {
                 nStep = STEP_DONE;
-                result_msg.data = "table is not suitable to grab";
+                result_msg.data = "桌面高度不适合抓取";
+                result_pub.publish(result_msg);
+            } else {
+                result_msg.data = "发现合适平面";
                 result_pub.publish(result_msg);
             }
+
         }
-        result_msg.data = "find plane";
-        result_pub.publish(result_msg);
+
     }
 
     //2、前后运动控制到平面的距离
@@ -535,9 +538,6 @@ void ProcCloudCB(const sensor_msgs::PointCloud2 &input)
                 VelCmd(-0.1,0,0);
             }
         }
-
-        result_msg.data = "plane dist";
-        result_pub.publish(result_msg);
     }
 
     //3、检测物品，挑选出准备抓取的目标物品
@@ -559,20 +559,23 @@ void ProcCloudCB(const sensor_msgs::PointCloud2 &input)
             if(fabs(fObjGrabX - fTargetPlaneDist) > 0.4 )
             {
                 ROS_WARN("[OBJ_TO_GRAB] Object is hard to reach !!!");
+                result_msg.data = "物品太远难以抓取";
+                result_pub.publish(result_msg);
                 nStep = STEP_DONE;
             }
             else
             {
                 fMoveTargetX = 0.0f;
                 fMoveTargetY = fObjGrabY - fTargetGrabY + grab_y_offset;
+
+                result_msg.data = "发现物品";
+                result_pub.publish(result_msg);
                 
                 //ROS_WARN("[MOVE_TARGET] x = %.2f y= %.2f " ,fMoveTargetX, fMoveTargetY);
                 nStep = STEP_OBJ_DIST;
             }
         }
 
-        result_msg.data = "find objects";
-        result_pub.publish(result_msg);
     }
 
     //5、抬起手臂
@@ -584,8 +587,6 @@ void ProcCloudCB(const sensor_msgs::PointCloud2 &input)
             mani_ctrl_msg.position[1] = 0.16;
             mani_ctrl_pub.publish(mani_ctrl_msg);
             ROS_WARN("[MANI_CTRL] lift= %.2f  gripper= %.2f " ,mani_ctrl_msg.position[0], mani_ctrl_msg.position[1]);
-            result_msg.data = "hand up";
-            result_pub.publish(result_msg);
         }
         nTimeDelayCounter ++;
         VelCmd(0,0,0);
@@ -604,7 +605,7 @@ void ProcCloudCB(const sensor_msgs::PointCloud2 &input)
     {
         if(nTimeDelayCounter == 0)
         {
-            result_msg.data = "grab";
+            result_msg.data = "开始抓取";
             result_pub.publish(result_msg);
         }
         mani_ctrl_msg.position[1] = grab_gripper_value;      //抓取物品手爪闭合宽度
@@ -627,8 +628,7 @@ void ProcCloudCB(const sensor_msgs::PointCloud2 &input)
             mani_ctrl_msg.position[0] += 0.03;
             mani_ctrl_pub.publish(mani_ctrl_msg);
             //ROS_WARN("[MANI_CTRL] lift= %.2f  gripper= %.2f " ,mani_ctrl_msg.position[0], mani_ctrl_msg.position[1]);
-            result_msg.data = "object up";
-            result_pub.publish(result_msg);
+            
         }
         nTimeDelayCounter++;
         VelCmd(0,0,0);
@@ -646,7 +646,7 @@ void ProcCloudCB(const sensor_msgs::PointCloud2 &input)
     //10、抓取任务完毕
     if(nStep == STEP_DONE)
     {
-        result_msg.data = "done";
+        result_msg.data = "抓取完成";
         result_pub.publish(result_msg);
         nTimeOut = 0;
         nStep = STEP_WAIT;
@@ -863,8 +863,6 @@ int main(int argc, char **argv)
                 nStep = STEP_FIND_OBJ;
             }
 
-            result_msg.data = "plane dist";
-            result_pub.publish(result_msg);
         }
     
         //4、左右平移对准目标物品 
@@ -885,10 +883,6 @@ int main(int argc, char **argv)
                 ctrl_pub.publish(ctrl_msg);
                 nStep = STEP_HAND_UP;
             }
-
-
-            result_msg.data = "object x";
-            result_pub.publish(result_msg);
         }
 
          //6、前进靠近物品
@@ -909,9 +903,6 @@ int main(int argc, char **argv)
                 ctrl_pub.publish(ctrl_msg);
                 nStep = STEP_GRAB;
             }
-
-            result_msg.data = "forward";
-            result_pub.publish(result_msg);
         }
 
         //9、带着物品后退
@@ -936,8 +927,6 @@ int main(int argc, char **argv)
                 nStep = STEP_DONE;
             }
 
-            result_msg.data = "backward";
-            result_pub.publish(result_msg);
         }
 
         ros::spinOnce();

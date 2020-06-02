@@ -1,0 +1,9 @@
+<launch>
+
+<node name="tts_subscribe_speak" type="tts_subscribe_speak" pkg="xfei_asr" output="screen"/>
+
+<node name="iat_publish_speak" type="iat_publish_speak" pkg="xfei_asr" output="screen"/>
+
+<node name="main_control" type="main_control" pkg="xfei_asr" output="screen"/>
+
+</launch>
