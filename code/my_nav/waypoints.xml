@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?><Waterplus>     
          <Waypoint>          
             <Name>goal1</Name>          
-            <Pos_x>2.937201738357544</Pos_x>        
-            <Pos_y>7.111928462982178</Pos_y>        
+            <Pos_x>1.0599818229675293</Pos_x>        
+            <Pos_y>5.804169178009033</Pos_y>        
             <Pos_z>0</Pos_z>       
             <Ori_x>0</Ori_x>        
             <Ori_y>0</Ori_y>        
-            <Ori_z>-0.002325562526673467</Ori_z>       
-            <Ori_w>0.9999972958758111</Ori_w>        
+            <Ori_z>0.6493415234944451</Ori_z>       
+            <Ori_w>0.7604969335019788</Ori_w>        
          </Waypoint>     
 </Waterplus>

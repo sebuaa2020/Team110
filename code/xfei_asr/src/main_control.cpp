@@ -42,19 +42,19 @@ int main(int argc, char* argv[])
     ros::init(argc,argv, "main_ctrl");
     ros::NodeHandle n;
 
-    talker = n.advertise<std_msgs::String>("/xfwords", 10);
-    listener = n.subscribe("/xfspeech", 30, cmdCB);
+    talker = n.advertise<std_msgs::String>("/xfwords", 1000);
+    listener = n.subscribe("/xfspeech", 1000, cmdCB);
     behaviors_pub = n.advertise<std_msgs::String>("/wpb_home/behaviors", 30);
 
     ros::Subscriber grab_sub = n.subscribe("/wpb_home/grab_result", 30, GrabResultCB);
     ros::Subscriber pass_sub = n.subscribe("/wpb_home/pass_result", 30, GrabResultCB);
     
-    ros::Publisher listen_pub = n.advertise<std_msgs::String>("/xfwakeup", 10);
+    ros::Publisher listen_pub = n.advertise<std_msgs::String>("/xfwakeup", 1000);
     sleep(1);
     std_msgs::String msg;
     msg.data = "ok";
 
-    ros::Rate r(0.066);
+    ros::Rate r(0.2);
 
     while(ros::ok())
     {

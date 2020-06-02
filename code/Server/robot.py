@@ -5,6 +5,7 @@ from PIL import Image
 import subprocess
 from xml.dom.minidom import parse
 import math
+import time
 
 
 def trans(pitch, roll, yaw):
@@ -31,6 +32,7 @@ def navi_part(x, y, theta):
     with open('../catkin_ws/src/my_nav/waypoints.xml', 'w') as f:
         # 缩进 - 换行 - 编码
         domTree.writexml(f, addindent='', encoding='utf-8')
+    subprocess.Popen("rosrun waterplus_map_tools wp_manager _load:=/home/eric/catkin_ws/src/my_nav/waypoints.xml", shell=True)
 
 
 class Robot:
@@ -86,7 +88,6 @@ class Robot:
                         self.pose['y'] = 0.0
                         self.pose['theta'] = 0.0
             cur_pos.kill()
-            subprocess.Popen("killall home_core", shell=True)
         print(self.pose)
         return base64_str.decode()
 
@@ -101,8 +102,9 @@ class Robot:
     def activate(self):
         self.simulator = subprocess.Popen("roslaunch wpr_simulation wpb_simple.launch", stdout=subprocess.PIPE,
                                           shell=True, preexec_fn=os.setsid)
+        time.sleep(3)
         self.grab_part = subprocess.Popen("roslaunch robot_grab grab_action.launch", stdout=subprocess.PIPE,
-                                          shell=True, preexec_fn=os.setsid)
+                                         shell=True, preexec_fn=os.setsid)
         self.pass_part = subprocess.Popen("roslaunch robot_grab pass_action.launch", stdout=subprocess.PIPE,
                                           shell=True, preexec_fn=os.setsid)
         self.voice_part = subprocess.Popen("roslaunch xfei_asr xfei_main.launch ", stdout=subprocess.PIPE,
