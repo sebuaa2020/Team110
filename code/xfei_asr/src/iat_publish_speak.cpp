@@ -322,9 +322,49 @@ static void demo_mic(const char* session_begin_params)
 
 		sleep(1);
 
-		if(i == 15 && iat.recorder->bufcount < 50)
+		if(i == 15 && iat.recorder->bufcount < 50) {
 
-			i = 0;
+			//如果声音不超过这个值，则需要重新监听
+
+			i = 0; 
+
+			errcode = sr_stop_listening(&iat);
+
+			if (errcode) {
+
+        		flag_no=1;
+
+				printf("stop listening failed %d\n", errcode);
+
+			}
+
+			sr_uninit(&iat);
+
+			iat = speech_rec();
+
+			errcode = sr_init(&iat, session_begin_params, SR_MIC, &recnotifier);
+
+			if (errcode) {
+
+        		flag_no=1;
+
+				printf("speech recognizer init failed\n");
+
+				return;
+
+			}
+
+			errcode = sr_start_listening(&iat);
+
+			if (errcode) {
+
+				printf("start listen failed %d\n", errcode);
+
+			}
+
+			sleep(1);//这里保证休眠一段时间，否则暴力循环CPU肯定会出事
+
+		}
 
 	}
 
