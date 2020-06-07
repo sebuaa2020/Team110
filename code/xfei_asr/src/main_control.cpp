@@ -54,13 +54,8 @@ int main(int argc, char* argv[])
     std_msgs::String msg;
     msg.data = "ok";
 
-    ros::Rate r(0.2);
+    listen_pub.publish(msg);
+    ros::spin();
 
-    while(ros::ok())
-    {
-        listen_pub.publish(msg);
-        ros::spinOnce();
-        r.sleep();
-    }
     return 0;
 }

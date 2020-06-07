@@ -46,7 +46,7 @@ int flag_ok = 0 ;
 
 int flag_no = 0 ;
 
-
+static ros::Publisher pub2;
 
 
 
@@ -172,12 +172,18 @@ static void show_result(char *string, char is_over)
 
     flag_ok=1;	
 
-    printf("\rResult:[ %s ]",  string);
+	printf("\rResult:[ %s ]",  string);
 
-    if(is_over)
+
+    if(is_over) {
 
 		putchar('\n');
+		std_msgs::String msg;
 
+   		msg.data = string;
+
+    	pub2.publish(msg);
+	}
 
 
 }
@@ -436,7 +442,7 @@ int main(int argc, char* argv[])
 
     ros::Publisher pub1 = n.advertise<std_msgs::String>("xfwords", 1000);
 
-    ros::Publisher pub2 = n.advertise<std_msgs::String>("xfspeech", 1000);
+    pub2 = n.advertise<std_msgs::String>("xfspeech", 1000);
 
 
 
@@ -506,11 +512,11 @@ int main(int argc, char* argv[])
 
             flag_ok=0;
 
-            std_msgs::String msg;
+            // std_msgs::String msg;
 
-            msg.data = g_result;
+            // msg.data = g_result;
 
-            pub2.publish(msg);
+            // pub2.publish(msg);
 
         }
 

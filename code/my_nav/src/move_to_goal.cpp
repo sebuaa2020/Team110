@@ -24,6 +24,7 @@ static string strGoto;
 static move_base_msgs::MoveBaseGoal goal;
 static ros::ServiceClient cliGetWPName;
 static vector <waterplus_map_tools::Waypoint> arWaypoint;
+static ros::Publisher talker;
 
 bool LoadWaypointsFromFile(string inFilename)
 {
@@ -129,9 +130,11 @@ bool getWaypointByName()
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "wove_to_goal");
+    ros::init(argc, argv, "move_to_goal");
     ros::NodeHandle n;
     cliGetWPName = n.serviceClient<waterplus_map_tools::GetWaypointByName>("/waterplus/get_waypoint_name");
+    talker = n.advertise<std_msgs::String>("/xfwords", 1000);
+    std_msgs::String result_msg;
     if(argc<=1){
         ROS_INFO("No wp Name!");
         return 0;
@@ -157,6 +160,8 @@ int main(int argc, char **argv)
             if(!getWaypointByName()){
                 return 0;
             }
+            result_msg.data = "开始导航";
+            talker.publish(result_msg);
             goal.target_pose.header.frame_id = "map";
             goal.target_pose.header.stamp = ros::Time::now();
             ac.sendGoal(goal);
@@ -164,10 +169,14 @@ int main(int argc, char **argv)
             if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
             {
                 ROS_INFO("Arrived at %s!",strGoto.c_str());
+                result_msg.data = "达到目标点";
+                talker.publish(result_msg);
             }
             else
             {
                 ROS_INFO("Failed to get to %s ...",strGoto.c_str() );
+                result_msg.data = "导航终止";
+                talker.publish(result_msg);
             }
         }
                 
