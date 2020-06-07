@@ -32,7 +32,8 @@ def navi_part(x, y, theta):
     with open('../catkin_ws/src/my_nav/waypoints.xml', 'w') as f:
         # 缩进 - 换行 - 编码
         domTree.writexml(f, addindent='', encoding='utf-8')
-    subprocess.Popen("rosrun waterplus_map_tools wp_manager _load:=/home/eric/catkin_ws/src/my_nav/waypoints.xml", shell=True)
+    subprocess.Popen("rosrun waterplus_map_tools wp_manager _load:=/home/eric/catkin_ws/src/my_nav/waypoints.xml",
+                     shell=True)
 
 
 class Robot:
@@ -96,7 +97,8 @@ class Robot:
             self.nav_point['x'] = x
             self.nav_point['y'] = y
             self.nav_point['theta'] = theta
-            navi_part(x, y, theta)
+            if -8.21 < x < 6.66 and -8.7 < y < 10.81:
+                navi_part(x, y, theta)
         print(x, y, theta)
 
     def activate(self):
@@ -104,7 +106,7 @@ class Robot:
                                           shell=True, preexec_fn=os.setsid)
         time.sleep(3)
         self.grab_part = subprocess.Popen("roslaunch robot_grab grab_action.launch", stdout=subprocess.PIPE,
-                                         shell=True, preexec_fn=os.setsid)
+                                          shell=True, preexec_fn=os.setsid)
         self.pass_part = subprocess.Popen("roslaunch robot_grab pass_action.launch", stdout=subprocess.PIPE,
                                           shell=True, preexec_fn=os.setsid)
         self.voice_part = subprocess.Popen("roslaunch xfei_asr xfei_main.launch ", stdout=subprocess.PIPE,
